@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import SBreadcrumb from '../../components/Breadcrumb';
-import { config } from '../../configs';
 import Form from './form'
-import axios from 'axios';
 import SAlert from '../../components/Alert';
-import SNavbar from '../../components/Navbar';
+import { useDispatch } from 'react-redux';
+import { postData } from '../../utils/fetch';
+import { setNotif } from '../../redux/notif/actions';
 
 function CategoryCreate() {
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+
     const [form, setForm] = useState({
         name: ''
     })
@@ -18,8 +21,6 @@ function CategoryCreate() {
         message: ''
     })
     const [loading, setLoading] = useState(false)
-    const token = localStorage.getItem('token');
-    const navigate = useNavigate()
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value })
@@ -29,11 +30,16 @@ function CategoryCreate() {
         e.preventDefault()
         setLoading(true)
         try {
-            await axios.post(`${config.api_host_dev}/cms/categories`, form, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            let res = await postData('/cms/categories', form)
+
+            dispatch(
+                setNotif(
+                    true,
+                    'success',
+                    `Successfully add new category ${res.data.data.name}`
+                )
+            )
+
             navigate('/categories')
             setLoading(false)
         } catch (error) {
@@ -48,23 +54,20 @@ function CategoryCreate() {
     }
 
     return (
-        <>
-            <SNavbar />
-            <Container>
-                <SBreadcrumb
-                    textSecond={'Categories'}
-                    urlSecond={'/categories'}
-                    textThird={'Create'}
-                />
-                {alert.status && <SAlert type={alert.type} message={alert.message} />}
-                <Form
-                    form={form}
-                    loading={loading}
-                    handleChange={handleChange}
-                    handleSubmit={handleSubmit}
-                />
-            </Container>
-        </>
+        <Container>
+            <SBreadcrumb
+                textSecond={'Categories'}
+                urlSecond={'/categories'}
+                textThird={'Create'}
+            />
+            {alert.status && <SAlert type={alert.type} message={alert.message} />}
+            <Form
+                form={form}
+                loading={loading}
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+            />
+        </Container>
     );
 }
 

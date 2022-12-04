@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { Card, Container } from 'react-bootstrap';
-import SAlert from '../../components/Alert';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { config } from '../../configs';
+import { useDispatch } from 'react-redux'
+import { Card, Container } from 'react-bootstrap';
 import SForm from './form';
+import SAlert from '../../components/Alert';
+import { postData } from '../../utils/fetch';
+import { userLogin } from '../../redux/auth/actions';
 
 function SignIn() {
     const [alert, setAlert] = useState({ show: false, message: '', type: '' });
@@ -15,9 +16,7 @@ function SignIn() {
     });
 
     const navigate = useNavigate();
-
-    const token = localStorage.getItem('token');
-    if (token) return <Navigate to='/' replace={true} />
+    const dispatch = useDispatch()
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,8 +28,9 @@ function SignIn() {
         setLoading(true);
 
         try {
-            const { data } = await axios.post(`${config.api_host_dev}/cms/auth/signin`, form);
-            localStorage.setItem('token', data.data.token);
+            const { data } = await postData(`/cms/auth/signin`, form);
+
+            dispatch(userLogin(data.data.token, data.data.role))
             setLoading(false);
             navigate('/');
         } catch (error) {
