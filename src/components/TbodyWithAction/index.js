@@ -31,7 +31,7 @@ function TbodyWithAction({ data, display, editUrl, deleteAction, customAction, a
                                                         <Image
                                                             height={40}
                                                             width={40}
-                                                            roundCircle
+                                                            roundedCircle
                                                             src={`${config.api_image}/${data[key]}`}
                                                         />
                                                     ) : key === 'date' ? (

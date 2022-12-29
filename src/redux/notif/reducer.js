@@ -15,7 +15,7 @@ export default function reducer(state = initialState, action) {
             return { ...state, status: action.status, typeNotif: action.typeNotif, message: action.message }
 
         case CLEAR_NOTIF:
-            return { state: initialState }
+            return { ...initialState }
 
         default:
             return state

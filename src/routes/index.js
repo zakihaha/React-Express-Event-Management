@@ -5,6 +5,7 @@ import SNavbar from "../components/Navbar";
 import SignIn from "../pages/signin";
 import { CategoriesRoute } from "./CategoriesRoute";
 import { HomeRoute } from "./HomeRoute";
+import { TalentsRoute } from "./TalentsRoute";
 
 export function AppRoutes() {
     return (
@@ -13,6 +14,7 @@ export function AppRoutes() {
             <Route path='/' element={<> <SNavbar /> <GuardRoute /> </>} >
                 <Route path="dashboard/*" element={<HomeRoute />} />
                 <Route path="categories/*" element={<CategoriesRoute />} />
+                <Route path="talents/*" element={<TalentsRoute />} />
 
                 <Route path="" element={<Navigate to={'/dashboard'} replace={true} />} />
             </Route>
