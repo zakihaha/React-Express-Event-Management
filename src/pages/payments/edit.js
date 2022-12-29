@@ -9,13 +9,12 @@ import SBreadcrumb from '../../components/Breadcrumb';
 import { getData, postData, putData } from '../../utils/fetch';
 import { setNotif } from '../../redux/notif/actions';
 
-function TalentsEdit(props) {
-    const { talentId } = useParams()
+function PaymentsEdit(props) {
+    const { paymentId } = useParams()
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [form, setForm] = useState({
         name: '',
-        role: '',
         file: '',
         avatar: ''
     })
@@ -28,13 +27,12 @@ function TalentsEdit(props) {
 
     const [loading, setLoading] = useState(false)
 
-    const fetchOneCategories = async () => {
-        const res = await getData(`/cms/talents/${talentId}`)
+    const fetchOnePayment = async () => {
+        const res = await getData(`/cms/payments/${paymentId}`)
 
         setForm({
             ...form,
-            name: res.data.data.name,
-            role: res.data.data.role,
+            name: res.data.data.type,
             avatar: res.data.data.image.name,
             file: res.data.data.image._id
         })
@@ -107,19 +105,18 @@ function TalentsEdit(props) {
         try {
             const payload = {
                 image: form.file,
-                role: form.role,
-                name: form.name
+                type: form.name
             }
 
-            let res = await putData(`/cms/talents/${talentId}`, payload)
+            let res = await putData(`/cms/payments/${paymentId}`, payload)
             dispatch(
                 setNotif(
                     true,
                     'success',
-                    `Successfully update talent ${res.data.data.name}`
+                    `Successfully update payment ${res.data.data.name}`
                 )
             )
-            navigate('/talents')
+            navigate('/payments')
             setLoading(false)
 
         } catch (error) {
@@ -134,14 +131,14 @@ function TalentsEdit(props) {
     }
 
     useEffect(() => {
-        fetchOneCategories()
+        fetchOnePayment()
     }, [])
 
     return (
         <Container>
             <SBreadcrumb
-                textSecond={'Talents'}
-                urlSecond={'/talents'}
+                textSecond={'Payments'}
+                urlSecond={'/payments'}
                 textThird='Edit'
             />
             {alert.status && <SAlert type={alert.type} message={alert.message} />}
@@ -156,4 +153,4 @@ function TalentsEdit(props) {
     );
 }
 
-export default TalentsEdit;
+export default PaymentsEdit;

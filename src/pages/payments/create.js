@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
-import { useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Form from './form'
 import SAlert from '../../components/Alert';
 import SBreadcrumb from '../../components/Breadcrumb';
-import { getData, postData, putData } from '../../utils/fetch';
+import { postData } from '../../utils/fetch';
 import { setNotif } from '../../redux/notif/actions';
 
-function TalentsEdit(props) {
-    const { talentId } = useParams()
+function PaymentsCreate(props) {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [form, setForm] = useState({
         name: '',
-        role: '',
         file: '',
         avatar: ''
     })
@@ -27,18 +24,6 @@ function TalentsEdit(props) {
     })
 
     const [loading, setLoading] = useState(false)
-
-    const fetchOneCategories = async () => {
-        const res = await getData(`/cms/talents/${talentId}`)
-
-        setForm({
-            ...form,
-            name: res.data.data.name,
-            role: res.data.data.role,
-            avatar: res.data.data.image.name,
-            file: res.data.data.image._id
-        })
-    }
 
     const uploadImage = async (file) => {
         let formData = new FormData();
@@ -107,21 +92,21 @@ function TalentsEdit(props) {
         try {
             const payload = {
                 image: form.file,
-                role: form.role,
-                name: form.name
+                type: form.name
             }
 
-            let res = await putData(`/cms/talents/${talentId}`, payload)
+            let res = await postData('/cms/payments', payload)
+
             dispatch(
                 setNotif(
                     true,
                     'success',
-                    `Successfully update talent ${res.data.data.name}`
+                    `Successfully add new payment ${res.data.data.name}`
                 )
             )
-            navigate('/talents')
-            setLoading(false)
 
+            navigate('/payments')
+            setLoading(false)
         } catch (error) {
             setLoading(false)
             setAlert({
@@ -133,16 +118,12 @@ function TalentsEdit(props) {
         }
     }
 
-    useEffect(() => {
-        fetchOneCategories()
-    }, [])
-
     return (
         <Container>
             <SBreadcrumb
-                textSecond={'Talents'}
-                urlSecond={'/talents'}
-                textThird='Edit'
+                textSecond={'Payments'}
+                urlSecond={'/payments'}
+                textThird={'Create'}
             />
             {alert.status && <SAlert type={alert.type} message={alert.message} />}
             <Form
@@ -150,10 +131,9 @@ function TalentsEdit(props) {
                 loading={loading}
                 handleChange={handleChange}
                 handleSubmit={handleSubmit}
-                edit
             />
         </Container>
     );
 }
 
-export default TalentsEdit;
+export default PaymentsCreate;
