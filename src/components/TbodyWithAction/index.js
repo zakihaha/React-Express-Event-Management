@@ -35,7 +35,7 @@ function TbodyWithAction({ data, display, editUrl, deleteAction, customAction, a
                                                             src={`${config.api_image}/${data[key]}`}
                                                         />
                                                     ) : key === 'date' ? (
-                                                        moment(data[key].format('DD-MM-YYYY, h:mm:ss a'))
+                                                        moment(data[key]).format('DD-MM-YYYY, h:mm:ss a')
                                                     ) : (
                                                         data[key]
                                                     )
