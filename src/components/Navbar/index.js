@@ -44,7 +44,7 @@ function SNavbar(props) {
                     {/* <NavLink role={role} roles={organizers.lihat} action={() => navigate('/organizers')}>Organizers</NavLink> */}
                     <NavLink role={role} roles={accessEvents.lihat} action={() => navigate('/events')}>Events</NavLink>
                     <NavLink role={role} roles={accessParticipant.lihat} action={() => navigate('/participant')}>Participant</NavLink>
-                    <NavLink role={role} roles={accessOrders.lihat} action={() => navigate('/transactions')}>Transactions</NavLink>
+                    <NavLink role={role} roles={accessOrders.lihat} action={() => navigate('/orders')}>Orders</NavLink>
                 </Nav>
                 <Nav>
                     <Nav.Link onClick={() => handleLogout()}>Logout</Nav.Link>
