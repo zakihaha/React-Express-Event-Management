@@ -1,20 +1,40 @@
 import React, { useState } from 'react';
 import { Container } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Form from './form'
 import SAlert from '../../components/Alert';
 import SBreadcrumb from '../../components/Breadcrumb';
 import { postData } from '../../utils/fetch';
 import { setNotif } from '../../redux/notif/actions';
+import { useEffect } from 'react';
+import { fetchListsCategories, fetchListsTalents } from '../../redux/lists/actions';
 
 function EventsCreate(props) {
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const lists = useSelector((state) => state.lists)
     const [form, setForm] = useState({
-        name: '',
+        title: '',
+        price: '',
+        date: '',
         file: '',
-        avatar: ''
+        avatar: '',
+        about: '',
+        venueName: '',
+        tagline: '',
+        keyPoint: [''],
+        tickets: [
+            {
+                type: '',
+                statusTicketCategories: '',
+                stock: '',
+                price: '',
+            },
+        ],
+        category: '',
+        talent: '',
+        stock: '',
     })
 
     const [alert, setAlert] = useState({
@@ -81,18 +101,89 @@ function EventsCreate(props) {
                     [e.target.name]: '',
                 });
             }
+        } else if (e.target.name === 'category' || e.target.name === 'talent') {
+            setForm({ ...form, [e.target.name]: e });
         } else {
-            setForm({ ...form, [e.target.name]: e.target.value })
+            setForm({ ...form, [e.target.name]: e.target.value });
         }
     }
+
+    // handle keypoint
+    const handleChangeKeyPoint = (e, i) => {
+        let _temp = [...form.keyPoint]
+        _temp[i] = e.target.value
+        setForm({ ...form, keyPoint: _temp })
+    }
+
+    const handlePlusKeyPoint = () => {
+        let _temp = [...form.keyPoint]
+        _temp.push('')
+        setForm({ ...form, keyPoint: _temp })
+    }
+
+    const handleMinusKeyPoint = (index) => {
+        let _temp = [...form.keyPoint]
+
+        let removeIndex = _temp.map(function (_, i) {
+            return i
+        }).indexOf(index)
+
+        _temp.splice(removeIndex, 1)
+
+        setForm({ ...form, keyPoint: _temp })
+    }
+
+    // handle ticket
+    const handleChangeTicket = (e, i) => {
+        let _temp = [...form.tickets]
+
+        _temp[i][e.target.name] = e.target.value
+
+        setForm({ ...form, tickets: _temp })
+    }
+
+    const handlePlusTicket = () => {
+        let _temp = [...form.tickets]
+        _temp.push({
+            type: '',
+            statusTicketCategories: '',
+            stock: '',
+            price: '',
+        })
+
+        setForm({ ...form, tickets: _temp })
+    }
+
+    const handleMinusTicket = (index) => {
+        let _temp = [...form.tickets]
+
+        let removeIndex = _temp.map(function (_, i) {
+            return i
+        }).indexOf(index)
+
+        _temp.splice(removeIndex, 1)
+
+        setForm({ ...form, tickets: _temp })
+    }
+
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
         try {
             const payload = {
+                date: form.date,
                 image: form.file,
-                type: form.name
+                title: form.title,
+                price: form.price,
+                about: form.about,
+                venueName: form.venueName,
+                tagline: form.tagline,
+                keyPoint: form.keyPoint,
+                category: form.category.value,
+                talent: form.talent.value,
+                status: form.status,
+                tickets: form.tickets,
             }
 
             let res = await postData('/cms/events', payload)
@@ -101,7 +192,7 @@ function EventsCreate(props) {
                 setNotif(
                     true,
                     'success',
-                    `Successfully add new event ${res.data.data.name}`
+                    `Successfully add new event ${res.data.data.title}`
                 )
             )
 
@@ -118,6 +209,11 @@ function EventsCreate(props) {
         }
     }
 
+    useEffect(() => {
+        dispatch(fetchListsTalents())
+        dispatch(fetchListsCategories())
+    }, [dispatch])
+
     return (
         <Container>
             <SBreadcrumb
@@ -129,8 +225,15 @@ function EventsCreate(props) {
             <Form
                 form={form}
                 loading={loading}
+                lists={lists}
                 handleChange={handleChange}
                 handleSubmit={handleSubmit}
+                handleChangeKeyPoint={handleChangeKeyPoint}
+                handlePlusKeyPoint={handlePlusKeyPoint}
+                handleMinusKeyPoint={handleMinusKeyPoint}
+                handlePlusTicket={handlePlusTicket}
+                handleMinusTicket={handleMinusTicket}
+                handleChangeTicket={handleChangeTicket}
             />
         </Container>
     );

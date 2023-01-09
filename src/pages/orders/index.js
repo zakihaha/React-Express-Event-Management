@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import SAlert from '../../components/Alert';
 import SBreadcrumb from '../../components/Breadcrumb';
-import SButton from '../../components/Button';
 import Table from '../../components/TableWithAction';
-import { fetchOrders, setDate, setKeyword, setPage } from '../../redux/orders/actions';
+import { fetchOrders, setDate, setPage } from '../../redux/orders/actions';
 import SearchInput from '../../components/SearchInput';
 import { fetchListsEvents } from '../../redux/lists/actions';
 import InputDate from '../../components/InputDate';
@@ -15,7 +13,6 @@ import { formatDate } from '../../utils/formatDate';
 function OrdersPage(props) {
     const dispatch = useDispatch()
 
-    const notif = useSelector((state) => state.notif)
     const orders = useSelector(state => state.orders)
 
     let [isShowed, setIsShowed] = useState(false)
@@ -52,12 +49,6 @@ function OrdersPage(props) {
                 <Col></Col>
                 <Col></Col>
             </Row>
-
-            {
-                notif.status && (
-                    <SAlert type={notif.typeNotif} message={notif.message} />
-                )
-            }
 
             <Table
                 status={orders.status}

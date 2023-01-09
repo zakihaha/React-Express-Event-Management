@@ -11,7 +11,7 @@ import { accessEvents } from '../../const/access';
 import { setNotif } from '../../redux/notif/actions';
 import { fetchEvents, setCategory, setKeyword, setTalent } from '../../redux/events/actions';
 import Swal from 'sweetalert2';
-import { deleteData } from '../../utils/fetch';
+import { deleteData, putData } from '../../utils/fetch';
 import SearchInput from '../../components/SearchInput';
 import { fetchListsCategories, fetchListsTalents } from '../../redux/lists/actions';
 import SelectBox from '../../components/SelectBox';
@@ -42,6 +42,37 @@ function EventsPage(props) {
             }
         })
         setAccess(access)
+    }
+
+    const handleChangeStatus = (id, status) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This action will cause a permanent changes',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085D6',
+            cancelButtonColor: '#D33',
+            confirmButtonText: 'Yes, change status',
+            cancelButtonText: 'Cancel'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const payload = {
+                    status: status === 'Published' ? 'Draft' : 'Published'
+                }
+                console.log(payload);
+                const res = await putData(`/cms/events/${id}/status`, payload)
+
+                dispatch(
+                    setNotif(
+                        true,
+                        'success',
+                        `Successfully change event status`
+                    )
+                )
+
+                dispatch(fetchEvents())
+            }
+        })
     }
 
     const handleDelete = (id) => {
@@ -150,18 +181,18 @@ function EventsPage(props) {
                 ]}
                 editUrl={access.edit ? `/events/edit` : null}
                 deleteAction={access.hapus ? (id) => handleDelete(id) : null}
-                // customAction={(id, status = '') => {
-                //     return (
-                //         <SButton
-                //             className={'mx-2'}
-                //             variant='primary'
-                //             size={'sm'}
-                //             action={() => handleChangeStatus(id, status)}
-                //         >
-                //             Change Status
-                //         </SButton>
-                //     );
-                // }}
+                customAction={(id, status = '') => {
+                    return (
+                        <SButton
+                            className={'mx-2'}
+                            variant='primary'
+                            size={'sm'}
+                            action={() => handleChangeStatus(id, status)}
+                        >
+                            Change Status
+                        </SButton>
+                    );
+                }}
                 withoutPagination
             />
         </Container>

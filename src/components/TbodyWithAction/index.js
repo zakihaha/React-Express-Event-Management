@@ -47,6 +47,7 @@ function TbodyWithAction({ data, display, editUrl, deleteAction, customAction, a
                                 {
                                     !actionNotDisplay && (
                                         <td>
+                                            {customAction && customAction(data._id, data.statusEvent)}
                                             {
                                                 editUrl && (
                                                     <SButton
